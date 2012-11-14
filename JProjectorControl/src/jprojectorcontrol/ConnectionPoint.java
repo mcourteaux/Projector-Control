@@ -8,8 +8,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -61,7 +60,7 @@ public class ConnectionPoint
     
     public Socket createSocket() throws IOException
     {
-        Logger.getLogger("Network").log(Level.INFO, "Connecting to: " + toString());
+        Logger.getLogger("Network").info("Connecting to: " + toString());
         return new Socket(host, port);
     }
     

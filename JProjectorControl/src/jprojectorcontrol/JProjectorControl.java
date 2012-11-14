@@ -6,6 +6,10 @@ package jprojectorcontrol;
 
 import jprojectorcontrol.projectors.hitachi.CPX2;
 import jprojectorcontrol.projectors.hitachi.HitachiCommand;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 
 /**
  *
@@ -19,8 +23,17 @@ public class JProjectorControl
      */
     public static void main(String[] args) throws Exception
     {
+        Logger logger = Logger.getLogger("Network");
+        logger.setLevel(Level.ALL);
+        logger.addAppender(new ConsoleAppender(new PatternLayout()));
+        
+        
         CPX2 proj = new CPX2(new ConnectionPoint("localhost:9715"));
         System.out.println(proj);
-        proj.executeCommand(new HitachiCommand("POWER-ON"));
+        
+        HitachiCommand hc = new HitachiCommand("POWER-ON");
+        proj.executeCommand(hc);
+        System.out.println(Utilities.bytesToString(hc.getResponse()));
+        
     }
 }

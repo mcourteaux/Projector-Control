@@ -4,6 +4,7 @@
  */
 package jprojectorcontrol.projectors.hitachi;
 
+import jprojectorcontrol.Utilities;
 import jprojectorcontrol.projectors.Command;
 
 /**
@@ -14,6 +15,7 @@ public class HitachiCommand extends Command
 {
     
     private String command;
+    private byte[] response;
 
     public HitachiCommand(String command)
     {
@@ -24,5 +26,22 @@ public class HitachiCommand extends Command
     {
         return command;
     }
+    
+    public byte[] getCommandBytes()
+    {
+        return Utilities.parseBytes("be:ef:03:06:00:19:d3:02:00:00:60:00:00");
+    }
+
+    public void setOutput(byte[] response)
+    {
+        setHasOutput(true);
+        this.response = response;
+    }
+
+    public byte[] getResponse()
+    {
+        return response;
+    }
+    
     
 }

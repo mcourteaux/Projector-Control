@@ -14,12 +14,13 @@ public abstract class Command
 {
     
     public Status statusCode;
+    public boolean hasOutput;
     
     public Command()
     {
     }
     
-    protected void setStatusCode(Status statusCode)
+    public void setStatusCode(Status statusCode)
     {
         this.statusCode = statusCode;
     }
@@ -28,11 +29,19 @@ public abstract class Command
     {
         return statusCode;
     }
-    
+
     public boolean didSucceed()
     {
         return statusCode == Status.SUCCESS;
     }
     
-    
+    public void setHasOutput(boolean fl)
+    {
+        this.hasOutput = fl;
+    }
+
+    public boolean hasOutput()
+    {
+        return hasOutput;
+    }  
 }

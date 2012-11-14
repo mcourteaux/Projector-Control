@@ -39,8 +39,6 @@ public abstract class Projector
         return connectionPoint;
     }
     
-    
-    
     @Override
     public String toString()
     {

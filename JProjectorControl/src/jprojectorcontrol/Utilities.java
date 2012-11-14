@@ -24,4 +24,25 @@ public class Utilities
         }
         return String.format("%d.%d.%d.%d", address[0], address[1], address[2], address[3]);
     }
+    
+    public static byte[] parseBytes(String bytesStr)
+    {
+        String[] bStr = bytesStr.split(":");
+        byte[] buffer = new byte[bStr.length];
+        for (int i = 0; i < buffer.length; ++i)
+        {
+            buffer[i] = (byte) Integer.parseInt(bStr[i], 16);
+        }
+        return buffer;
+    }
+    
+    public static String bytesToString(byte[] buffer)
+    {
+        String str = "";
+        for (int i = 0; i < buffer.length; ++i)
+        {
+            str += ":" + String.format("%02x", 0xFF & buffer[i]);
+        }
+        return str.substring(1);
+    }
 }
