@@ -4,6 +4,10 @@
  */
 package jprojectorcontrol.projectors.hitachi;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 import jprojectorcontrol.Utilities;
 import jprojectorcontrol.projectors.Command;
 
@@ -13,9 +17,33 @@ import jprojectorcontrol.projectors.Command;
  */
 public class HitachiCommand extends Command
 {
-    
+
     private String command;
     private byte[] response;
+    private int responseLength;
+    
+    private static Map<String, String> commands = new HashMap<String, String>();
+    
+    static
+    {
+        try
+        {
+            BufferedReader br = new BufferedReader(new InputStreamReader(HitachiCommand.class.getResourceAsStream("/jprojectorcontrol/projectors/hitachi/commands.txt")));
+            String line;
+            while ((line = br.readLine()) != null)
+            {
+                if (line.trim().isEmpty()) continue;
+                String[] splitted = line.split(" ");
+                System.out.println(line);
+                commands.put(splitted[1], splitted[0]);
+            }
+            br.close();
+            System.out.println("Commands loaded!");
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 
     public HitachiCommand(String command)
     {
@@ -26,26 +54,17 @@ public class HitachiCommand extends Command
     {
         return command;
     }
-    
+
     public byte[] getCommandBytes()
     {
-        if (command.equals("POWER-ON"))
-        {
-            return Utilities.parseBytes("be:ef:03:06:00:ba:d2:01:00:00:60:01:00"); // Turn on
-        } else if (command.equals("POWER-OFF"))
-        {
-            return Utilities.parseBytes("be:ef:03:06:00:2a:d3:01:00:00:60:00:00"); // Turn off
-        } else if (command.equals("POWER-GET"))
-        {
-            return Utilities.parseBytes("be:ef:03:06:00:19:d3:02:00:00:60:00:00"); // Ask
-        }
-        return null;
+        return Utilities.parseBytes(commands.get(command));
     }
 
-    public void setOutput(byte[] response)
+    public void setOutput(byte[] response, int responseLength)
     {
         setHasOutput(true);
         this.response = response;
+        this.responseLength = responseLength;
     }
 
     public byte[] getResponse()
@@ -53,5 +72,8 @@ public class HitachiCommand extends Command
         return response;
     }
     
-    
+    public int getResponseLength()
+    {
+        return responseLength;
+    }
 }

@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import jprojectorcontrol.ConnectionPoint;
+import jprojectorcontrol.ProjectorException;
 import jprojectorcontrol.Status;
 import jprojectorcontrol.Utilities;
 import jprojectorcontrol.projectors.Command;
@@ -38,6 +39,39 @@ public class CPX2 extends Projector
         if (protocol < PROTOCOL_23 || protocol > PROTOCOL_9715)
         {
             throw new IllegalArgumentException("Protocol doesn't exist");
+        }
+    }
+
+    @Override
+    public int getPower(boolean forceUpdate) throws Exception
+    {
+        if (forceUpdate || powerStateCache == -1)
+        {
+            HitachiCommand hc = new HitachiCommand("POWER-GET");
+            executeCommand(hc);
+            if (hc.getResponseLength() == 3)
+            {
+                byte[] response = hc.getResponse();
+                powerStateCache = response[0];
+                return response[0];
+            }
+
+            throw new ProjectorException("Projector didn't respond as expected.");
+        } else
+        {
+            return powerStateCache;
+        }
+    }
+
+    @Override
+    public void setPower(boolean power) throws Exception
+    {
+        String cmd = power ? "POWER-ON" : "POWER-OFF";
+        HitachiCommand hc = new HitachiCommand(cmd);
+        executeCommand(hc);
+        if (hc.getResponse()[0] != 0x06)
+        {
+            throw new ProjectorException("Projector didn't respond as expected.");
         }
     }
 
@@ -74,8 +108,8 @@ public class CPX2 extends Projector
         dos.flush();
 
         byte[] response = new byte[MAXIMUM_RESPONSE_LENGTH];
-        dis.read(response);
-        command.setOutput(response);
+        int length = dis.read(response);
+        command.setOutput(response, length);
 
         if (response[0] == 0x06)
         {
@@ -128,8 +162,8 @@ public class CPX2 extends Projector
         dos.flush();
 
         byte[] response = new byte[MAXIMUM_RESPONSE_LENGTH];
-        dis.read(response);
-        command.setOutput(response);
+        int length = dis.read(response);
+        command.setOutput(response, length);
 
         if (response[0] == 0x06)
         {

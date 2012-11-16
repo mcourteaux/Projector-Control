@@ -14,13 +14,24 @@ public abstract class Projector
 {
     
     private ConnectionPoint connectionPoint;
+    protected int powerStateCache;
+    private String location;
     
     public Projector(ConnectionPoint host)
     {
         this.connectionPoint = host;
+        this.powerStateCache = -1;
     }
     
     public abstract void executeCommand(Command command) throws Exception;
+    
+    public abstract int getPower(boolean forceUpdate) throws Exception;
+    public abstract void setPower(boolean power) throws Exception;
+    
+    public String getLocation()
+    {
+        return location;
+    }
     
     public String getBrand()
     {

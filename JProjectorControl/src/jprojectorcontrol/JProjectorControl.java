@@ -4,6 +4,8 @@
  */
 package jprojectorcontrol;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import javax.swing.JOptionPane;
 import jprojectorcontrol.projectors.hitachi.CPX2;
 import jprojectorcontrol.projectors.hitachi.HitachiCommand;
@@ -24,21 +26,30 @@ public class JProjectorControl
      */
     public static void main(String[] args) throws Exception
     {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+
         Logger logger = Logger.getLogger("Network");
         logger.setLevel(Level.ALL);
         logger.addAppender(new ConsoleAppender(new PatternLayout()));
-        
-        
+
+
         CPX2 proj = new CPX2(new ConnectionPoint("10.2.2.134:23"));
         System.out.println(proj);
-        
+
         HitachiCommand hcAsk = new HitachiCommand("POWER-GET");
         proj.executeCommand(hcAsk);
         System.out.println("Power status: " + Utilities.bytesToString(hcAsk.getResponse()));
-        
-        HitachiCommand hc = new HitachiCommand(JOptionPane.showInputDialog("Give next command"));
-        proj.executeCommand(hc);
-        System.out.println("Projector answered: " + Utilities.bytesToString(hc.getResponse()));
-        
+
+        while (true)
+        {
+            System.out.println("Give next command");
+            HitachiCommand hc = new HitachiCommand(in.readLine());
+            if (hc.getCommandBytes() == null)
+            {
+                return;
+            }
+            proj.executeCommand(hc);
+            System.out.println("Projector answered: " + Utilities.bytesToString(hc.getResponse()));
+        }
     }
 }
