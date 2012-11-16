@@ -22,7 +22,7 @@ public class Utilities
         {
             throw new IllegalArgumentException("Byte array should be 4 bytes long.");
         }
-        return String.format("%d.%d.%d.%d", address[0], address[1], address[2], address[3]);
+        return String.format("%d.%d.%d.%d", 0xFF & address[0], 0xFF & address[1], 0xFF & address[2], 0xFF & address[3]);
     }
     
     public static byte[] parseBytes(String bytesStr)
