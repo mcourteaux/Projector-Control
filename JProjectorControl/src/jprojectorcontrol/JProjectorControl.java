@@ -5,8 +5,10 @@
 package jprojectorcontrol;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
-import javax.swing.JOptionPane;
+import jprojectorcontrol.gui.OverviewFrame;
+import jprojectorcontrol.gui.ProjectorManager;
 import jprojectorcontrol.projectors.hitachi.CPX2;
 import jprojectorcontrol.projectors.hitachi.HitachiCommand;
 import org.apache.log4j.ConsoleAppender;
@@ -26,12 +28,24 @@ public class JProjectorControl
      */
     public static void main(String[] args) throws Exception
     {
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-
-        Logger logger = Logger.getLogger("Network");
+        Logger logger;
+        logger = Logger.getLogger("Network");
+        logger.setLevel(Level.ALL);
+        logger.addAppender(new ConsoleAppender(new PatternLayout()));
+        logger = Logger.getLogger("UI");
+        logger.setLevel(Level.ALL);
+        logger.addAppender(new ConsoleAppender(new PatternLayout()));
+        logger = Logger.getLogger("ProjMan");
         logger.setLevel(Level.ALL);
         logger.addAppender(new ConsoleAppender(new PatternLayout()));
 
+
+        if (testing())
+        {
+            return;
+        }
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
         CPX2 proj = new CPX2(new ConnectionPoint("10.2.2.134:23"));
         System.out.println(proj);
@@ -51,5 +65,14 @@ public class JProjectorControl
             proj.executeCommand(hc);
             System.out.println("Projector answered: " + Utilities.bytesToString(hc.getResponse()));
         }
+    }
+
+    private static boolean testing() throws Exception
+    {
+        Utilities.setLaF();
+        OverviewFrame of = new OverviewFrame();
+        of.setLocationByPlatform(true);
+        of.setVisible(true);
+        return true;
     }
 }

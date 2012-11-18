@@ -4,6 +4,10 @@
  */
 package jprojectorcontrol;
 
+import javax.swing.ImageIcon;
+import javax.swing.UIManager;
+import org.apache.log4j.Logger;
+
 /**
  *
  * @author martijncourteaux
@@ -44,5 +48,34 @@ public class Utilities
             str += ":" + String.format("%02x", 0xFF & buffer[i]);
         }
         return str.substring(1);
+    }
+    
+    public static void setLaF()
+    {
+        try
+        {
+            if (System.getProperty("mrj.version") != null)
+            {
+                System.setProperty("apple.laf.useScreenMenuBar", "true");
+                System.setProperty("com.apple.mrj.application.apple.menu.about.name", "JProjectorControl");
+            }
+        } catch (Exception e)
+        {
+        }
+        try
+        {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+            UIManager.put("Tree.leafIcon", UIManager.get("Tree.closedIcon"));
+            
+            UIManager.put("Projector.powerOn", new ImageIcon(Utilities.class.getResource("gui/img/Button-Blank-Green-Icon.png")));
+            UIManager.put("Projector.powerOff", new ImageIcon(Utilities.class.getResource("gui/img/Button-Blank-Red-Icon.png")));
+            UIManager.put("Projector.powerUnknown", new ImageIcon(Utilities.class.getResource("gui/img/Button-Blank-Gray-Icon.png")));
+            UIManager.put("Projector.coolDown", new ImageIcon(Utilities.class.getResource("gui/img/Button-Blank-Blue-Icon.png")));
+        } catch (Exception e)
+        {
+            Logger.getLogger("UI").warn("Cannot set LaF", e);
+        }
+        
+        
     }
 }

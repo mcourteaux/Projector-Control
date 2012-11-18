@@ -1,0 +1,22 @@
+root{
+SJC{
+Oud Gebouw{
+Verdiep 0{
+}
+Verdiep 1{
+}
+Verdiep 2{
+[
+jprojectorcontrol.projectors.hitachi.CPX2
+10.2.2.123:23
+107
+]
+[
+jprojectorcontrol.projectors.hitachi.CPX2
+10.2.2.134:23
+202
+]
+}
+}
+}
+}

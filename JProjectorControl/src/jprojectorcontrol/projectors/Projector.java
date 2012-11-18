@@ -33,16 +33,21 @@ public abstract class Projector
         return location;
     }
     
-    public String getBrand()
+    public void setLocation(String location)
     {
-        String str = getClass().getPackage().getName().substring(Projector.class.getPackage().getName().length() + 1);
+        this.location = location;
+    }
+    
+    public static String getBrand(Class<? extends Projector> clazz)
+    {
+        String str = clazz.getPackage().getName().substring(Projector.class.getPackage().getName().length() + 1);
         str = Character.toUpperCase(str.charAt(0)) + str.substring(1);
         return str;
     }
     
-    public String getModelName()
+    public static String getModelName(Class<? extends Projector> clazz)
     {
-        return getClass().getSimpleName();
+        return clazz.getSimpleName();
     }
 
     public ConnectionPoint getConnectionPoint()
@@ -53,6 +58,13 @@ public abstract class Projector
     @Override
     public String toString()
     {
-        return getBrand() + " " + getModelName();
+        return getBrandAndModelName(getClass());
     }
+    
+    public static String getBrandAndModelName(Class<? extends Projector> clazz)
+    {
+        return getBrand(clazz) + " " + getModelName(clazz);
+    }
+
+    
 }

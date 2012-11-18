@@ -45,7 +45,7 @@ public class CPX2 extends Projector
     @Override
     public int getPower(boolean forceUpdate) throws Exception
     {
-        if (forceUpdate || powerStateCache == -1)
+        if (forceUpdate)
         {
             HitachiCommand hc = new HitachiCommand("POWER-GET");
             executeCommand(hc);

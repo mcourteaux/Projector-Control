@@ -4,6 +4,12 @@
  */
 package jprojectorcontrol.gui;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import jprojectorcontrol.projectors.ProjectorModels;
+import org.apache.log4j.Logger;
+
 /**
  *
  * @author martijncourteaux
@@ -11,12 +17,33 @@ package jprojectorcontrol.gui;
 public class OverviewFrame extends javax.swing.JFrame
 {
 
+    private ProjectorManager man;
+    private File projectorFile;
+
     /**
      * Creates new form OverviewFrame
      */
     public OverviewFrame()
     {
+        man = new ProjectorManager();
+        projectorFile = new File("proj.txt");
+        if (projectorFile.exists())
+        {
+            try
+            {
+                man.load(projectorFile);
+            } catch (IOException ex)
+            {
+                Logger.getLogger("UI").error(null, ex);
+            }
+        }
+
         initComponents();
+        treeProjectors.setModel(man.createTreeModel(true));
+        treeProjectors.setCellRenderer(new ProjectorTreeRenderer());
+
+        cmbModel.setModel(ProjectorModels.createComboBoxModel());
+        cmbModel.setRenderer(new ModelListRenderer());
     }
 
     /**
@@ -39,12 +66,11 @@ public class OverviewFrame extends javax.swing.JFrame
         jLabel3 = new javax.swing.JLabel();
         fldLocation = new javax.swing.JTextField();
         scroller = new javax.swing.JScrollPane();
-        jSeparator1 = new javax.swing.JSeparator();
-        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("JProjectorControl");
 
+        treeProjectors.setRootVisible(false);
         jScrollPane1.setViewportView(treeProjectors);
 
         btnManageProjectors.setText("Manage Projectors");
@@ -58,6 +84,7 @@ public class OverviewFrame extends javax.swing.JFrame
 
         jLabel1.setText("Host/Port:");
 
+        fldHostPort.setEditable(false);
         fldHostPort.setFont(new java.awt.Font("Monospaced", 0, 13)); // NOI18N
 
         jLabel2.setText("Model:");
@@ -76,7 +103,7 @@ public class OverviewFrame extends javax.swing.JFrame
                     .add(jLabel1)
                     .add(jLabel2)
                     .add(jLabel3))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 67, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(pnlGeneralLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(cmbModel, 0, 272, Short.MAX_VALUE)
                     .add(fldLocation)
@@ -86,7 +113,6 @@ public class OverviewFrame extends javax.swing.JFrame
         pnlGeneralLayout.setVerticalGroup(
             pnlGeneralLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(pnlGeneralLayout.createSequentialGroup()
-                .addContainerGap()
                 .add(pnlGeneralLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel1)
                     .add(fldHostPort, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -101,8 +127,6 @@ public class OverviewFrame extends javax.swing.JFrame
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jButton1.setText("jButton1");
-
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -110,18 +134,12 @@ public class OverviewFrame extends javax.swing.JFrame
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 202, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(pnlGeneral, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(scroller)))
-                    .add(jSeparator1)
-                    .add(layout.createSequentialGroup()
-                        .add(btnManageProjectors)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jButton1)
-                        .add(0, 0, Short.MAX_VALUE)))
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+                    .add(btnManageProjectors, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(pnlGeneral, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(scroller, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -132,14 +150,11 @@ public class OverviewFrame extends javax.swing.JFrame
                     .add(layout.createSequentialGroup()
                         .add(pnlGeneral, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(scroller))
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(btnManageProjectors)
-                    .add(jButton1))
+                        .add(scroller, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE))
+                    .add(layout.createSequentialGroup()
+                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(btnManageProjectors)))
                 .addContainerGap())
         );
 
@@ -148,71 +163,27 @@ public class OverviewFrame extends javax.swing.JFrame
 
     private void btnManageProjectorsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnManageProjectorsActionPerformed
     {//GEN-HEADEREND:event_btnManageProjectorsActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnManageProjectorsActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[])
-    {
-        /*
-         * Set the Nimbus look and feel
-         */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the
-         * default look and feel. For details see
-         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
+        ProjectorManagerFrame f = new ProjectorManagerFrame(this, man);
+        f.setVisible(true);
+        treeProjectors.setModel(man.createTreeModel(true));
         try
         {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels())
-            {
-                if ("Nimbus".equals(info.getName()))
-                {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex)
+            man.save(projectorFile);
+        } catch (IOException ex)
         {
-            java.util.logging.Logger.getLogger(OverviewFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex)
-        {
-            java.util.logging.Logger.getLogger(OverviewFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex)
-        {
-            java.util.logging.Logger.getLogger(OverviewFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex)
-        {
-            java.util.logging.Logger.getLogger(OverviewFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Logger.getLogger("UI").error(null, ex);
         }
-        //</editor-fold>
 
-        /*
-         * Create and display the form
-         */
-        java.awt.EventQueue.invokeLater(new Runnable()
-        {
-
-            public void run()
-            {
-                new OverviewFrame().setVisible(true);
-            }
-        });
-    }
+    }//GEN-LAST:event_btnManageProjectorsActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnManageProjectors;
     private javax.swing.JComboBox cmbModel;
     private javax.swing.JTextField fldHostPort;
     private javax.swing.JTextField fldLocation;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPanel pnlGeneral;
     private javax.swing.JScrollPane scroller;
     private javax.swing.JTree treeProjectors;
